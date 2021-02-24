@@ -33,9 +33,12 @@ async function mostrarServicios() { //funcion para validar la base de datos. En 
             //generar div contenedor de servicio
             const servicioDiv = document.createElement('DIV');
             servicioDiv.classList.add('servicio');
+            servicioDiv.dataset.idServicio = id;
+
+            //selecionar un servicio para la cita
+            servicioDiv.onclick = seleccionarServicio;
 
             //inyectar precio y nombre al div de servicio
-
             servicioDiv.appendChild(nombreServicio);
             servicioDiv.appendChild(precioServicio);
             //El método appendChild() inserta un nuevo nodo dentro de la estructura DOM de un documento, y es la segunda parte del proceso central uno-dos, crear-y-añadir para construir páginas web a base de programación
@@ -49,4 +52,23 @@ async function mostrarServicios() { //funcion para validar la base de datos. En 
     } catch (error) {
         console.log(error);
     }
+}
+
+function seleccionarServicio(evento) {
+    let elemento;
+
+    if (evento.target.tagName === 'P') {
+        elemento = evento.target.parentElement //forzo a js que si le doy click al parrafo se seleccione el DIV
+
+    } else {
+        elemento = evento.target; //si no doy clic en el parrafo pues es un click dentro del dv
+    }
+
+    if (elemento.classList.contains('seleccionado')) { //funcion contains: para veriricar si tienen un clase
+        elemento.classList.remove('seleccionado');
+    } else {
+        elemento.classList.add('seleccionado')
+    }
+
+
 }
