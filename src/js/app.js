@@ -1,3 +1,5 @@
+let pagina = 1; //variable global para que la app inicie en la seccion de servicios siempre
+
 document.addEventListener('DOMContentLoaded', function() {
     iniciarApp();
 
@@ -5,7 +7,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function iniciarApp() {
     mostrarServicios();
+
+    //resalta el div actual segun el tab al que se preciona
+    mostrarSeccion();
+
+    //oculta o muestra una seccion segun el tab al que se preciona
+    cambiarSeccion();
 }
+
+function mostrarSeccion() {
+    const seccionActual = document.querySelector(`#paso_${pagina}`);
+    seccionActual.classList.add('mostrar__seccion')
+
+    //resalta la navegación actual 
+    const navegacion = document.querySelector(`[data-paso="${pagina}"]`);
+    navegacion.classList.add('actual');
+
+}
+
+
+function cambiarSeccion() {
+    const enlaces = document.querySelectorAll('.navegacion button') //El método querySelectorAll() de un Element devuelve una NodeList estática (no viva) que representa una lista de elementos del documento que coinciden con el grupo de selectores indicados
+    enlaces.forEach(enlace => {
+        enlace.addEventListener('click', evento => {
+            evento.preventDefault();
+
+            pagina = parseInt(evento.target.dataset.paso); //para que lo tome como un numero 
+
+            //eliminar mostrar__seccion de la seccion anterior
+
+            document.querySelector('.mostrar__seccion').classList.remove('mostrar__seccion');
+            const seccion = document.querySelector(`#paso_${pagina}`);
+            seccion.classList.add('mostrar__seccion')
+
+            //eliminar la clase de actual en el tab anterior
+            document.querySelector('.navegacion .actual').classList.remove('actual')
+
+
+            //agregar la clase de actual en el tab siguiente
+            const navegacion = document.querySelector(`[data-paso="${pagina}"]`);
+            navegacion.classList.add('actual');
+
+
+        })
+    })
+}
+
+
 //try catch sirve si una concexion se pudo iniciar a una base de datos
 async function mostrarServicios() { //funcion para validar la base de datos. En caso que no halla resultados sigue funcionando 
     try { //estamos llamando toda la hoja de servicios de servici.jason para llevarlo al HTML

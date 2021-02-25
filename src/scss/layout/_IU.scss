@@ -25,8 +25,9 @@ body {
     .seccion {
         display: none;
         margin-top: $separacion/2;
-        &:first-of-type {
-            display: block;
-        }
     }
+}
+
+.mostrar__seccion {
+    display: block!important;
 }
