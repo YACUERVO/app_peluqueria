@@ -1,0 +1,22 @@
+.paginacion {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $separacion;
+    margin-bottom: 4rem;
+    button {
+        background-color: $azul;
+        padding: 1rem 3rem;
+        display: block;
+        text-align: center;
+        color: $blanco;
+        border: none;
+        font-weight: bold;
+        font-size: 2rem;
+        &.ocultar {
+            visibility: hidden; //para ocultar el botton pero que guarde su pocision
+        }
+        &:hover {
+            cursor: pointer;
+        }
+    }
+}
