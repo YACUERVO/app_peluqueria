@@ -1,5 +1,12 @@
 let pagina = 1; //variable global para que la app inicie en la seccion de servicios siempre
 
+const cita = {
+    nombre: '',
+    fecha: '',
+    hora: '',
+    servicio: []
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     iniciarApp();
 
@@ -21,6 +28,12 @@ function iniciarApp() {
 
     //comprueba la pagina actual para ocultar o mostrar la paginacion
     botonesPaginador()
+
+    //muestra el resumen de la cita (o mensaje en caso de no pasar la validación)
+    mostrarResumen()
+
+    //almacena el nombre de la cita en el objeto
+    nombreCita()
 }
 
 function mostrarSeccion() {
@@ -39,15 +52,12 @@ function mostrarSeccion() {
     if (navegacionAnterior) {
         //eliminar la clase de actual en el tab anterior
         navegacionAnterior.classList.remove('actual')
-
     }
 
-
-    //resalta la navegación actual 
+    //resalta la navegación actual
     const navegacion = document.querySelector(`[data-paso="${pagina}"]`);
     navegacion.classList.add('actual');
 
-    mostrarSeccion();
 
 }
 
@@ -58,7 +68,7 @@ function cambiarSeccion() {
         enlace.addEventListener('click', evento => {
             evento.preventDefault();
 
-            pagina = parseInt(evento.target.dataset.paso); //para que lo tome como un numero 
+            pagina = parseInt(evento.target.dataset.paso); //para que lo tome como un numero
 
 
 
@@ -85,7 +95,7 @@ function cambiarSeccion() {
 
 
 //try catch sirve si una concexion se pudo iniciar a una base de datos
-async function mostrarServicios() { //funcion para validar la base de datos. En caso que no halla resultados sigue funcionando 
+async function mostrarServicios() { //funcion para validar la base de datos. En caso que no halla resultados sigue funcionando
     try { //estamos llamando toda la hoja de servicios de servici.jason para llevarlo al HTML
         const resultado = await fetch('./servicios.json'); //fetch para llamar la base de datos de jason
         const db = await resultado.json(); //para saber el tipo de datos al estilo objetos en javas crip
@@ -144,12 +154,38 @@ function seleccionarServicio(evento) {
 
     if (elemento.classList.contains('seleccionado')) { //funcion contains: para veriricar si tienen un clase
         elemento.classList.remove('seleccionado');
+
+        const id = parseInt(elemento.dataset.idServicio); //para converitr a el numero 
+
+        eliminarServicio(id);
     } else {
         elemento.classList.add('seleccionado')
-    }
 
+        // console.log(elemento.firstElementChild.nextElementSibling.textContent);//para vierificar el precio par allevarlo al obeto
+
+        const servicioObj = {
+                id: parseInt(elemento.dataset.idServicio), //para mirar a donde doy click
+                nombre: elemento.firstElementChild.textContent, //traer el nombre del elemento
+                precio: elemento.firstElementChild.nextElementSibling.textContent //traer el precio del elemento
+            }
+            // console.log(servicioObj)
+        agregarServicio(servicioObj);
+    }
+}
+
+function eliminarServicio(id) {
+    const { servicio } = cita;
+    cita.servicio = servicio.filter(servicios => servicios.id !== id); //El método filter() crea un nuevo array con todos los elementos que cumplan la condición implementada por la función dada.
+    console.log(cita)
+}
+
+function agregarServicio(servicioObj) {
+    const { servicio } = cita;
+    cita.servicio = [...servicio, servicioObj]; //codigo para que se vayan agregando los servicios  que requiere el usaurio 
+    console.log(cita)
 
 }
+
 
 function paginaSiguiente() {
     const paginaSiguiente = document.querySelector('#siguiente');
@@ -177,6 +213,7 @@ function botonesPaginador() {
     const paginaAnterior = document.querySelector('#anterior');
     if (pagina === 1) {
         paginaAnterior.classList.add('ocultar');
+        paginaSiguiente.classList.remove('ocultar');
 
         // } else if (pagina === 2) {
         //     paginaAnterior.classList.remove('ocultar');
@@ -192,6 +229,43 @@ function botonesPaginador() {
     }
 
     mostrarSeccion(); //cambia la seccion que se muestra por la de la pagina
+}
 
+function mostrarResumen() {
+    //destruction
+    const { nombre, fecha, hora, servicios } = cita;
 
+    //seleccionar el resumen
+    const resumenDiv = document.querySelector('.contenido__resumen');
+
+    //validacion del objeto
+    if (Object.values(cita).includes('')) {
+        const noServicio = document.createElement('P');
+        noServicio.textContent = 'Faltan datos de servicios, hora fecha o nombre';
+
+        noServicio.classList.add('invalidar__cita');
+
+        //agregar a resumen Div
+
+        resumenDiv.appendChild(noServicio);
+    }
+}
+
+function nombreCita() {
+    const nombreInput = document.querySelector('#nombre')
+
+    nombreInput.addEventListener('input', (evento) => { //input: para validar si esta escribiendo en tiempo real
+        const nombreTexto = evento.target.value.trim(); //funcion trim para que no tome los espcacio en blanco al incio y al final 
+        //console.log(nombreTexto); //para saber que es lo que esta escribiendo el usuario 
+
+        //validacion de que el nombreTexto debe tener algo
+        if (nombreTexto === '' || nombreTexto.length < 3) {
+            console.log('nombre no valido')
+
+        } else {
+            // console.log('nombre valido')
+            cita.nombre = nombreTexto;
+            console.log(cita)
+        }
+    });
 }
