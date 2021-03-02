@@ -34,6 +34,13 @@ function iniciarApp() {
 
     //almacena el nombre de la cita en el objeto
     nombreCita()
+
+    //almacenar fecha de la cita
+    fechaCita()
+
+    //deshabilita días anteriores del calentadrio
+    deshabilitarFechaAnterior()
+
 }
 
 function mostrarSeccion() {
@@ -191,7 +198,7 @@ function paginaSiguiente() {
     const paginaSiguiente = document.querySelector('#siguiente');
     paginaSiguiente.addEventListener('click', () => {
         pagina++;
-        console.log(pagina)
+        // console.log(pagina)
         botonesPaginador();
 
     })
@@ -202,7 +209,7 @@ function paginaAnterior() {
     const paginaAnterior = document.querySelector('#anterior');
     paginaAnterior.addEventListener('click', () => {
         pagina--;
-        console.log(pagina);
+        // console.log(pagina);
         botonesPaginador();
 
     })
@@ -223,6 +230,8 @@ function botonesPaginador() {
         paginaSiguiente.classList.add('ocultar');
         paginaAnterior.classList.remove('ocultar')
 
+        mostrarResumen(); //estamos en la pagina 3 carga el resumen de la cita, carga el resumen de la cita
+
     } else {
         paginaAnterior.classList.remove('ocultar');
         paginaSiguiente.classList.remove('ocultar')
@@ -238,6 +247,13 @@ function mostrarResumen() {
     //seleccionar el resumen
     const resumenDiv = document.querySelector('.contenido__resumen');
 
+    //limpiar el hmtl previo
+    resumenDiv.innerHTML = ''; //opcion 
+    while (resumenDiv.firstChild) { //opcion para optimizar
+        resumenDiv.removeChild(resumenDiv.firstChild);
+    }
+
+
     //validacion del objeto
     if (Object.values(cita).includes('')) {
         const noServicio = document.createElement('P');
@@ -248,6 +264,8 @@ function mostrarResumen() {
         //agregar a resumen Div
 
         resumenDiv.appendChild(noServicio);
+    } else {
+        console.log('todo bien, vamos a mostrar el resumen')
     }
 }
 
@@ -260,12 +278,89 @@ function nombreCita() {
 
         //validacion de que el nombreTexto debe tener algo
         if (nombreTexto === '' || nombreTexto.length < 3) {
-            console.log('nombre no valido')
+            // console.log('nombre no valido')
+            mostrarAlerta('Nombre no Valido', 'error')
 
         } else {
             // console.log('nombre valido')
+            const alerta = document.querySelector('.alerta');
+            if (alerta) {
+                alerta.remove();
+            }
             cita.nombre = nombreTexto;
             console.log(cita)
         }
     });
+}
+
+function mostrarAlerta(mensaje, tipo) {
+    //si hay una alerta previa, entonces no crear otra
+    const alertaPrevia = document.querySelector('.alerta');
+    if (alertaPrevia) {
+        return; //detecta la funcion y detiene el cogido para genrar solo un alerta
+
+    }
+
+    // console.log('el mensaje es', mensaje);
+    const alerta = document.createElement('DIV')
+    alerta.textContent = mensaje;
+    alerta.classList.add('alerta');
+
+    if (tipo === 'error') {
+        alerta.classList.add('error');
+    }
+    // console.log(alerta);
+
+    //insertar en el HTML
+    const formulario = document.querySelector('.formulario');
+    formulario.appendChild(alerta);
+
+    //ELIMINAR LA ALERTA DEPUES DE 3 SEGUNDOS
+
+    setTimeout(() => {
+        alerta.remove();
+    }, 3000);
+
+}
+
+function fechaCita() {
+    const fechaInput = document.querySelector('#fecha');
+    fechaInput.addEventListener('input', evento => {
+        const dia = new Date(evento.target.value).getUTCDay(); //getUTCDate() para retornanos el día 0 para el dia domingo. La función GETUTCDATE () devuelve la fecha y hora UTC del sistema de base de datos actual, en un Formato 'AAAA-MM-DD hh: mm: ss.mmm'. 
+
+        // const opciones = {
+        //     weekday: 'long',
+        //     year: 'numeric',
+        //     month: 'long',
+        // }
+        // console.log(dia.toLocaleDateString('es-ES', opciones));
+        if ([0, 6].includes(dia)) {
+            evento.preventDefault(); //para que no me deje selccionar la fecha 
+            fechaInput.value = '';
+
+            mostrarAlerta('Fines de semana no son permitidos', 'error');
+            // console.log('selecionaste domingo o sabado lo cual no es valido');//para mostrar en la consola y validar si funciona
+        } else {
+
+            cita.fecha = fechaInput.value;
+            //console.log('Fecha Correcta');
+            console.log(cita);
+        }
+
+    })
+
+}
+
+function deshabilitarFechaAnterior() {
+    const inputFecha = document.querySelector('#fecha');
+    // const fechaAhora = new Date();
+    // const year = fechaAhora.getFullYear();
+    // const mes = fechaAhora.getMonth() + 1;
+    // const dia = fechaAhora.getDate() + 1; //para que me selecciono para aprtar dia al dia sigueiten
+
+    // //formato deseado: AAAA-MM-DD
+    // const fechaDesahabilitar = `${year}-${mes}-${dia}`;
+
+    inputFecha.min = new Date().toISOString().split("T")[0]; //para desabitar fechas anteriores
+
 }
