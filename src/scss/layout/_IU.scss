@@ -2,12 +2,12 @@ body {
     background-color: $negro;
 }
 
-.contenedor__estetica {
+.contenedor-estetica {
     @include tablet {
         height: 100vh;
         @include grid(2, $separacion/2);
     }
-    .contenedor__imagen {
+    .imagen {
         height: 30rem;
         background-image: url(../img/1.jpg);
         background-size: cover;
@@ -28,6 +28,6 @@ body {
     }
 }
 
-.mostrar__seccion {
+.mostrar-seccion {
     display: block!important;
 }

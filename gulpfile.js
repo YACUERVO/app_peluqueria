@@ -22,7 +22,7 @@ const webp = require('gulp-webp'); //para que las imagenes se formatean a format
 //variables generales
 const paths = {
     scss: 'src/scss/**/*.scss',
-    js: 'src/js/**/*.js',
+    js: 'src/js/app2.js',
     imagenes: 'src/img/**/*'
 }
 
