@@ -106,8 +106,8 @@ function cambiarSeccion() {
 //try catch sirve si una concexion se pudo iniciar a una base de datos
 async function mostrarServicios() { //funcion para validar la base de datos. En caso que no halla resultados sigue funcionando
     try { //estamos llamando toda la hoja de servicios de servici.jason para llevarlo al HTML
-        const resultado = await fetch('./servicios.json');
-        const db = await resultado.json();
+        const resultado = await fetch('./servicios.json'); //fetch para llamar la base de datos de jason
+        const db = await resultado.json(); //para saber el tipo de datos al estilo objetos en javas crip
 
         const { servicios } = db;
 
@@ -138,6 +138,8 @@ async function mostrarServicios() { //funcion para validar la base de datos. En 
             // Inyectar precio y nombre al div de servicio
             servicioDiv.appendChild(nombreServicio);
             servicioDiv.appendChild(precioServicio);
+            //El método appendChild() inserta un nuevo nodo dentro de la estructura DOM de un documento, y es la segunda parte del proceso central uno-dos, crear-y-añadir para construir páginas web a base de programación
+
 
             // Inyectarlo en el HTML
             document.querySelector('#servicios').appendChild(servicioDiv);
@@ -161,16 +163,17 @@ function seleccionarServicio(e) {
     if (elemento.classList.contains('seleccionado')) {
         elemento.classList.remove('seleccionado');
 
-        const id = parseInt(elemento.dataset.idServicio);
+        const id = parseInt(elemento.dataset.idServicio); //para converitr a el numero 
 
         eliminarServicio(id);
     } else {
-        elemento.classList.add('seleccionado');
+        elemento.classList.add('seleccionado'); //si no doy clic en el parrafo pues es un click dentro del dv
+        // console.log(elemento.firstElementChild.nextElementSibling.textContent);//para vierificar el precio par allevarlo al obeto
 
         const servicioObj = {
-            id: parseInt(elemento.dataset.idServicio),
-            nombre: elemento.firstElementChild.textContent,
-            precio: elemento.firstElementChild.nextElementSibling.textContent
+            id: parseInt(elemento.dataset.idServicio), //para mirar a donde doy click
+            nombre: elemento.firstElementChild.textContent, //traer el nombre del elemento
+            precio: elemento.firstElementChild.nextElementSibling.textContent //traer el precio del elemento
         }
 
         // console.log(servicioObj);
@@ -180,14 +183,14 @@ function seleccionarServicio(e) {
 
 function eliminarServicio(id) {
     const { servicios } = cita;
-    cita.servicios = servicios.filter(servicio => servicio.id !== id);
+    cita.servicios = servicios.filter(servicio => servicio.id !== id); //El método filter() crea un nuevo array con todos los elementos que cumplan la condición implementada por la función dada.
 
     console.log(cita);
 }
 
 function agregarServicio(servicioObj) {
     const {  servicios } = cita;
-    cita.servicios = [...servicios, servicioObj];
+    cita.servicios = [...servicios, servicioObj]; //codigo para que se vayan agregando los servicios  que requiere el usaurio 
 
     console.log(cita);
 }
@@ -323,11 +326,14 @@ function mostrarResumen() {
 function nombreCita() {
     const nombreInput = document.querySelector('#nombre');
 
-    nombreInput.addEventListener('input', e => {
-        const nombreTexto = e.target.value.trim();
+    nombreInput.addEventListener('input', e => { //input: para validar si esta escribiendo en tiempo real
+        const nombreTexto = e.target.value.trim(); //funcion trim para que no tome los espcacio en blanco al incio y al final 
+        //console.log(nombreTexto); //para saber que es lo que esta escribiendo el usuario 
+
 
         // Validación de que nombreTexto debe tener algo
         if (nombreTexto === '' || nombreTexto.length < 3) {
+            // console.log('nombre no valido')
             mostrarAlerta('Nombre no valido', 'error')
         } else {
             const alerta = document.querySelector('.alerta');
@@ -345,9 +351,10 @@ function mostrarAlerta(mensaje, tipo) {
     // Si hay una alerta previa, entonces no crear otra
     const alertaPrevia = document.querySelector('.alerta');
     if (alertaPrevia) {
-        return;
-    }
+        return; //detecta la funcion y detiene el cogido para genrar solo un alerta
 
+    }
+    // console.log('el mensaje es', mensaje);
     const alerta = document.createElement('DIV');
     alerta.textContent = mensaje;
     alerta.classList.add('alerta');
@@ -355,6 +362,7 @@ function mostrarAlerta(mensaje, tipo) {
     if (tipo === 'error') {
         alerta.classList.add('error');
     }
+    // console.log(alerta);
 
     // Insertar en el HTML
     const formulario = document.querySelector('.formulario');
@@ -371,13 +379,23 @@ function fechaCita() {
     fechaInput.addEventListener('input', e => {
 
         const dia = new Date(e.target.value).getUTCDay();
+        //getUTCDate() para retornanos el día 0 para el dia domingo. La función GETUTCDATE () devuelve la fecha y hora UTC del sistema de base de datos actual, en un Formato 'AAAA-MM-DD hh: mm: ss.mmm'. 
+
+        // const opciones = {
+        //     weekday: 'long',
+        //     year: 'numeric',
+        //     month: 'long',
+        // }
+        // console.log(dia.toLocaleDateString('es-ES', opciones));
 
         if ([0, 6].includes(dia)) {
-            e.preventDefault();
+            e.preventDefault(); //para que no me deje selccionar la fecha 
             fechaInput.value = '';
             mostrarAlerta('Fines de Semana no son permitidos', 'error');
+            // console.log('selecionaste domingo o sabado lo cual no es valido');//para mostrar en la consola y validar si funciona
         } else {
             cita.fecha = fechaInput.value;
+            //console.log('Fecha Correcta');
 
             console.log(cita);
         }
@@ -387,21 +405,24 @@ function fechaCita() {
 function deshabilitarFechaAnterior() {
     const inputFecha = document.querySelector('#fecha');
 
-    const fechaAhora = new Date();
-    const year = fechaAhora.getFullYear();
-    const mes = fechaAhora.getMonth() + 1;
-    const dia = fechaAhora.getDate() + 1;
-    const fechaDeshabilitar = `${year}-${mes}-${dia}`;
+    // const fechaAhora = new Date();
+    // const year = fechaAhora.getFullYear();
+    // const mes = fechaAhora.getMonth() + 1;
+    // const dia = fechaAhora.getDate() + 1;
+    // const fechaDeshabilitar = `${year}-${mes}-${dia}`;
 
-    inputFecha.min = fechaDeshabilitar;
+    // inputFecha.min = fechaDeshabilitar;
+    inputFecha.min = new Date().toISOString().split("T")[0]; //para desabitar fechas anteriores
+
 }
+
 
 function horaCita() {
     const inputHora = document.querySelector('#hora');
     inputHora.addEventListener('input', e => {
 
         const horaCita = e.target.value;
-        const hora = horaCita.split(':');
+        const hora = horaCita.split(':'); //split: para evaluar el string y puedo buscar una divicion para 
 
         if (hora[0] < 10 || hora[0] > 18) {
             mostrarAlerta('Hora no válida', 'error');
